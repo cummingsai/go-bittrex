@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-type client struct {
+type Client struct {
 	apiKey      string
 	apiSecret   string
 	httpClient  *http.Client
@@ -22,26 +22,26 @@ type client struct {
 	debug       bool
 }
 
-// NewClient return a new Bittrex HTTP client
-func NewClient(apiKey, apiSecret string) (c *client) {
-	return &client{apiKey, apiSecret, &http.Client{}, 30 * time.Second, false}
+// NewClient return a new Bittrex HTTP Client
+func NewClient(apiKey, apiSecret string) (c *Client) {
+	return &Client{apiKey, apiSecret, &http.Client{}, 30 * time.Second, false}
 }
 
-// NewClientWithCustomHttpConfig returns a new Bittrex HTTP client using the predefined http client
-func NewClientWithCustomHttpConfig(apiKey, apiSecret string, httpClient *http.Client) (c *client) {
+// NewClientWithCustomHttpConfig returns a new Bittrex HTTP Client using the predefined http Client
+func NewClientWithCustomHttpConfig(apiKey, apiSecret string, httpClient *http.Client) (c *Client) {
 	timeout := httpClient.Timeout
 	if timeout <= 0 {
 		timeout = 30 * time.Second
 	}
-	return &client{apiKey, apiSecret, httpClient, timeout, false}
+	return &Client{apiKey, apiSecret, httpClient, timeout, false}
 }
 
-// NewClientWithCustomTimeout returns a new Bittrex HTTP client with custom timeout
-func NewClientWithCustomTimeout(apiKey, apiSecret string, timeout time.Duration) (c *client) {
-	return &client{apiKey, apiSecret, &http.Client{}, timeout, false}
+// NewClientWithCustomTimeout returns a new Bittrex HTTP Client with custom timeout
+func NewClientWithCustomTimeout(apiKey, apiSecret string, timeout time.Duration) (c *Client) {
+	return &Client{apiKey, apiSecret, &http.Client{}, timeout, false}
 }
 
-func (c client) dumpRequest(r *http.Request) {
+func (c Client) dumpRequest(r *http.Request) {
 	if r == nil {
 		log.Print("dumpReq ok: <nil>")
 		return
@@ -54,7 +54,7 @@ func (c client) dumpRequest(r *http.Request) {
 	}
 }
 
-func (c client) dumpResponse(r *http.Response) {
+func (c Client) dumpResponse(r *http.Response) {
 	if r == nil {
 		log.Print("dumpResponse ok: <nil>")
 		return
@@ -68,7 +68,7 @@ func (c client) dumpResponse(r *http.Response) {
 }
 
 // doTimeoutRequest do a HTTP request with timeout
-func (c *client) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.Response, error) {
+func (c *Client) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.Response, error) {
 	// Do the request in the background so we can check the timeout
 	type result struct {
 		resp *http.Response
@@ -95,7 +95,7 @@ func (c *client) doTimeoutRequest(timer *time.Timer, req *http.Request) (*http.R
 }
 
 // do prepare and process HTTP request to Bittrex API
-func (c *client) do(method string, resource string, payload string, authNeeded bool) (response []byte, err error) {
+func (c *Client) do(method string, resource string, payload string, authNeeded bool) (response []byte, err error) {
 	connectTimer := time.NewTimer(c.httpTimeout)
 
 	var rawurl string
